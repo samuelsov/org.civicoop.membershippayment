@@ -23,9 +23,11 @@ class CRM_Membershippayment_Contribution_Form {
     if (!CRM_Core_Permission::check( 'edit memberships' )) {
       return;
     }
-
+dsm($form);
     $membership_payment_id = false;
     $contribution_id = $form->getVar('_id');
+    dsm($contribution_id);
+    dsm($this->created_contribution_id);
     if (!$contribution_id && $this->created_contribution_id) {
       $contribution_id = $this->created_contribution_id;
     }
@@ -35,9 +37,16 @@ class CRM_Membershippayment_Contribution_Form {
     }
 
     $values = $form->controller->exportValues($form->getVar('_name'));
+    if($form->_submitValues['member_contact'] != $form->getVar('_contactID')) {
+      $sql = "UPDATE `civicrm_contribution` SET `contact_id` = %1 WHERE `id` = %2";
+      $params[1] = array($form->_submitValues['member_contact'], 'Integer');
+      $params[2] = array($contribution_id, 'Integer');
+      CRM_Core_DAO::executeQuery($sql, $params);
+    }
+
     $membership_id = false;
-    if (!empty($values['membership_id'])) {
-      $membership_id = $values['membership_id'];
+    if (!empty($form->_submitValues['membership_id'])) {
+      $membership_id = $form->_submitValues['membership_id'];
     }
 
     if (!$membership_payment_id && $membership_id) {
@@ -90,12 +99,15 @@ class CRM_Membershippayment_Contribution_Form {
     $snippet['template'] = 'CRM/Membershippayment/Contribution/Form.tpl';
     $snippet['contact_id'] = $contact_id;
 
+    $form->addEntityRef('member_contact', ts('Member Contact'));
     $form->add('select', 'membership_id', ts('Membership'), $memberships);
 
     if ($current_membership_id) {
       $defaults['membership_id'] = $current_membership_id;
-      $form->setDefaults($defaults);
     }
+
+    $defaults['member_contact'] = $contact_id;
+    $form->setDefaults($defaults);
 
     CRM_Core_Region::instance('page-body')->add($snippet);
   }
