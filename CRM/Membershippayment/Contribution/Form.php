@@ -23,11 +23,10 @@ class CRM_Membershippayment_Contribution_Form {
     if (!CRM_Core_Permission::check( 'edit memberships' )) {
       return;
     }
-dsm($form);
+
     $membership_payment_id = false;
     $contribution_id = $form->getVar('_id');
-    dsm($contribution_id);
-    dsm($this->created_contribution_id);
+
     if (!$contribution_id && $this->created_contribution_id) {
       $contribution_id = $this->created_contribution_id;
     }
