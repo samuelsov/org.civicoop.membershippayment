@@ -18,21 +18,21 @@
 
         cj('#member_contact').change(function(){
             var cid = cj(this).val();
-            var dN = fetchDisplayName(cid);
-            dN.done(function(res) {
-                 var displayName = res.result;
-                 CRM.api3('Membership', 'get', {
-                    "sequential": 1,
-                    "contact_id": cid
-                 }).done(function(result) {
-                    var data = result.values;
-                    var options = '<option value>-- None --</option>';
-                    for(x = 0; x < result.count; x++) {
-                        var label = displayName + " - " + data[x].membership_name + ": " + data[x].status_id + " (" + data[x].start_date + " - " + data[x].end_date + " )";
-                        options += '<option value="' + data[x]['id'] + '">' + label + '</option>';
-                    }
-                    cj('#membership_id').html(options);
-                });
+            CRM.api3('Membership', 'get', {
+              "sequential": 1,
+              "contact_id": cid,
+              "api.Contact.getsingle": {"id":"$value.contact_id","return":"display_name"},
+              "api.MembershipStatus.getsingle": {"id":"$value.status_id","return":"label"}
+            }).done(function(result) {
+               var data = result.values;
+               var options = '<option value>-- None --</option>';
+               for(x = 0; x < result.count; x++) {
+                 var displayName = data[x]['api.Contact.getsingle']['display_name'];
+                 var statusLabel = data[x]['api.MembershipStatus.getsingle']['label'];
+                 var label = displayName + " - " + data[x].membership_name + ": " + statusLabel + " (" + data[x].start_date + " - " + data[x].end_date + " )";
+                 options += '<option value="' + data[x]['id'] + '">' + label + '</option>';
+               }
+               cj('#membership_id').html(options);
             });
         });
     });
