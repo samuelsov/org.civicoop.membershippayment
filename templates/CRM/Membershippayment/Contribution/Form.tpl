@@ -36,13 +36,5 @@
             });
         });
     });
-
-    function fetchDisplayName(cid) {
-      return CRM.api3('Contact', 'getvalue', {
-        "sequential": 1,
-        "return": "display_name",
-        "id": cid
-      });
-    }
     {/literal}
 </script>
