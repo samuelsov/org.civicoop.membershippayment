@@ -128,7 +128,7 @@ class CRM_Membershippayment_Contribution_Form {
   }
 
   /**
-   * Update contact ID for give contribution ID
+   * Update contact ID for given contribution ID
    *
    * @param Integer $contribution_id
    * @param Integer $contactId
