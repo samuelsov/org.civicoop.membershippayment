@@ -36,9 +36,6 @@ class CRM_Membershippayment_Contribution_Form {
     }
 
     $values = $form->controller->exportValues($form->getVar('_name'));
-    if($form->_submitValues['member_contact'] != $form->getVar('_contactID')) {
-      $this->updateContributionContact($contribution_id, $form->_submitValues['member_contact']);
-    }
 
     $membership_id = false;
     if (!empty($form->_submitValues['membership_id'])) {
@@ -125,19 +122,6 @@ class CRM_Membershippayment_Contribution_Form {
       $memberships[$dao->id] = $display_name." - ".CRM_Member_PseudoConstant::membershipType($dao->membership_type_id) . ': '.CRM_Member_PseudoConstant::membershipStatus($dao->status_id, null, 'label').' ('.$startDate->format('d-m-Y').' - '.$endDate->format('d-m-Y').')';
     }
     return $memberships;
-  }
-
-  /**
-   * Update contact ID for given contribution ID
-   *
-   * @param Integer $contribution_id
-   * @param Integer $contactId
-   */
-  private function updateContributionContact($contribution_id, $contactId) {
-    $sql = "UPDATE `civicrm_contribution` SET `contact_id` = %1 WHERE `id` = %2";
-    $params[1] = array($contactId, 'Integer');
-    $params[2] = array($contribution_id, 'Integer');
-    CRM_Core_DAO::executeQuery($sql, $params);
   }
 
   /**
