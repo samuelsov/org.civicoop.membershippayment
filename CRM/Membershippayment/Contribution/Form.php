@@ -42,6 +42,17 @@ class CRM_Membershippayment_Contribution_Form {
       $membership_id = $form->_submitValues['membership_id'];
     }
 
+    // create soft contribution entry if contact ID and member contact are different
+    if(!empty($form->_submitValues['member_contact']) && ($form->_submitValues['member_contact'] != $contactId)) {
+      $result = civicrm_api3('ContributionSoft', 'create', array(
+        'sequential' => 1,
+        'contribution_id' => $contribution_id,
+        'amount' => $form->_submitValues['total_amount'],
+        'contact_id' => $form->_submitValues['member_contact'],
+        'soft_credit_type_id' => $form->_submitValues['soft_credit_type_id'],
+      ));
+    }
+
     if (!$membership_payment_id && $membership_id) {
       $sql = "INSERT INTO `civicrm_membership_payment` (`contribution_id`, `membership_id`) VALUES (%1, %2)";
       $params[1] = array($contribution_id, 'Integer');
@@ -95,9 +106,14 @@ class CRM_Membershippayment_Contribution_Form {
     $form->addEntityRef('member_contact', ts('Member Contact'));
     $form->add('select', 'membership_id', ts('Membership'), $memberships);
 
+    $softCreditTypes = array('' => ts('- Select Soft Credit Type -')) + CRM_Core_OptionGroup::values('soft_credit_type');
+    $form->add('select', 'soft_credit_type_id', ts('Soft Credit'), $softCreditTypes);
+
     if ($current_membership_id) {
       $defaults['membership_id'] = $current_membership_id;
     }
+
+    $form->assign('contact_id', $contact_id);
 
     $defaults['member_contact'] = $contact_id;
     $form->setDefaults($defaults);
