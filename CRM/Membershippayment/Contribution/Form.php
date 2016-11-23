@@ -116,6 +116,7 @@ class CRM_Membershippayment_Contribution_Form {
     $form->assign('contact_id', $contact_id);
 
     $defaults['member_contact'] = $contact_id;
+    $defaults['soft_credit_type_id'] = CRM_Utils_Array::value(ts('Gift'), array_flip($softCreditTypes));
     $form->setDefaults($defaults);
 
     CRM_Core_Region::instance('page-body')->add($snippet);
