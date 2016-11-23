@@ -5,6 +5,9 @@
     </tr>
 {/capture}
 {capture name="member_contact" assign="member_contact"}
+       <tr>
+           <td><strong>Related Membership</strong><hr></td>
+       </tr>
         <tr class="crm-membership_payment-form-block-member_contact">
             <td class="label">{$form.member_contact.label}</td>
             <td>{$form.member_contact.html}</td>
