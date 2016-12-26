@@ -41,9 +41,10 @@ class CRM_Membershippayment_Contribution_Form {
     if (!empty($form->_submitValues['membership_id'])) {
       $membership_id = $form->_submitValues['membership_id'];
     }
+    $contactId = $form->getVar('_contactID');
 
     // create soft contribution entry if contact ID and member contact are different
-    if(!empty($form->_submitValues['member_contact']) && ($form->_submitValues['member_contact'] != $contactId)) {
+    if(!empty($form->_submitValues['member_contact']) && !empty($contactId) && ($form->_submitValues['member_contact'] != $contactId)) {
       $result = civicrm_api3('ContributionSoft', 'create', array(
         'sequential' => 1,
         'contribution_id' => $contribution_id,
