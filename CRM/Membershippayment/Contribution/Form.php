@@ -94,6 +94,8 @@ class CRM_Membershippayment_Contribution_Form {
 
       $softContribution = civicrm_api3('ContributionSoft', 'get', array('contribution_id' => $contribution_id));
       $softContributionRecipient = $softContribution['values'][$softContribution['id']]['contact_id'];
+      $softContributionTypeId = $softContribution['values'][$softContribution['id']]['soft_credit_type_id'];
+
       foreach($softContribution['values'] as $softContribution) {
         if (!in_array($softContribution['contact_id'], $contact_ids)) {
           $memberships = $memberships + $this->getMembershipsForContact($softContribution['contact_id']);
@@ -116,9 +118,12 @@ class CRM_Membershippayment_Contribution_Form {
     }
 
     $form->assign('contact_id', $contact_id);
+    $showSoftContributionTypeSelect = isset($softContributionTypeId) ? 1 : 0;
+    $form->assign('show_soft_contribution_type_select', $showSoftContributionTypeSelect);
 
     $defaults['member_contact'] = $softContributionRecipient ? $softContributionRecipient : $contact_id;
-    $defaults['soft_credit_type_id'] = CRM_Utils_Array::value(ts('Gift'), array_flip($softCreditTypes));
+    $defaults['soft_credit_type_id'] = isset($softContributionTypeId) ? $softContributionTypeId : CRM_Utils_Array::value(ts('Gift'), array_flip($softCreditTypes));
+
     $form->setDefaults($defaults);
 
     CRM_Core_Region::instance('page-body')->add($snippet);

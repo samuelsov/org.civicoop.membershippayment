@@ -22,11 +22,13 @@
 <script type="text/javascript">
     {literal}
     cj(function() {
+        var showSoftContributionTypeSelect = {/literal}{$show_soft_contribution_type_select|escape:'javascript'}{literal}
         cj('tr.crm-contribution-form-block-contribution_status_id').after('{/literal}{$membership_payment|escape:'javascript'}{literal}');
         cj('tr.crm-membership_payment-form-block-membership_id').before('{/literal}{$member_contact|escape:'javascript'}{literal}');
         cj('tr.crm-membership_payment-form-block-membership_id').before('{/literal}{$soft_credit_type_id|escape:'javascript'}{literal}');
-        cj('tr.crm-membership_payment-form-block-soft_credit_type_id').hide();
-
+        if(showSoftContributionTypeSelect == 0) {
+          cj('tr.crm-membership_payment-form-block-soft_credit_type_id').hide();
+        }
         cj('#member_contact').change(function(){
             var contactId = {/literal}{$contact_id|escape:'javascript'}{literal}
             var cid = cj(this).val();
