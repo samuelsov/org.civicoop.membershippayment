@@ -1,31 +1,26 @@
-{capture name="membership_payment" assign="membership_payment"}
-    <tr class="crm-membership_payment-form-block-membership_id">
-        <td class="label">{$form.membership_id.label}</td>
-        <td>{$form.membership_id.html}</td>
-    </tr>
-{/capture}
-{capture name="member_contact" assign="member_contact"}
-       <tr>
-           <td><strong>Related Membership</strong><hr></td>
-       </tr>
-        <tr class="crm-membership_payment-form-block-member_contact">
-            <td class="label">{$form.member_contact.label}</td>
-            <td>{$form.member_contact.html}</td>
-        </tr>
-{/capture}
-{capture name="soft_credit_type" assign="soft_credit_type_id"}
-        <tr class="crm-membership_payment-form-block-soft_credit_type_id">
-            <td class="label">{$form.soft_credit_type_id.label}</td>
-            <td>{$form.soft_credit_type_id.html}</td>
-        </tr>
-{/capture}
+<table id = "related-membership-section">
+<tr id="related-membership-title">
+    <td><strong>Related Membership</strong><hr></td>
+  </tr>
+  <tr class="crm-membership_payment-form-block-member_contact">
+    <td class="label">{$form.member_contact.label}</td>
+    <td>{$form.member_contact.html}</td>
+  </tr>
+  <tr class="crm-membership_payment-form-block-soft_credit_type_id">
+    <td class="label">{$form.soft_credit_type_id.label}</td>
+    <td>{$form.soft_credit_type_id.html}</td>
+  </tr>
+  <tr class="crm-membership_payment-form-block-membership_id">
+    <td class="label">{$form.membership_id.label}</td>
+    <td>{$form.membership_id.html}</td>
+  </tr>
+</table>
 <script type="text/javascript">
     {literal}
     cj(function() {
         var showSoftContributionTypeSelect = {/literal}{$show_soft_contribution_type_select|escape:'javascript'}{literal}
-        cj('tr.crm-contribution-form-block-contribution_status_id').after('{/literal}{$membership_payment|escape:'javascript'}{literal}');
-        cj('tr.crm-membership_payment-form-block-membership_id').before('{/literal}{$member_contact|escape:'javascript'}{literal}');
-        cj('tr.crm-membership_payment-form-block-membership_id').before('{/literal}{$soft_credit_type_id|escape:'javascript'}{literal}');
+        cj('#related-membership-section').detach().insertAfter(cj('tr.crm-contribution-form-block-contribution_status_id').closest('table'));
+
         if(showSoftContributionTypeSelect == 0) {
           cj('tr.crm-membership_payment-form-block-soft_credit_type_id').hide();
         }
