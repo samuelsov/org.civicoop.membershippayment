@@ -93,6 +93,7 @@ class CRM_Membershippayment_Contribution_Form {
       $current_membership_id = CRM_Core_DAO::singleValueQuery("SELECT membership_id FROM civicrm_membership_payment where contribution_id = %1", array(1 => array($contribution_id, 'Integer')));
 
       $softContribution = civicrm_api3('ContributionSoft', 'get', array('contribution_id' => $contribution_id));
+      $softContributionRecipient = $softContribution['values'][$softContribution['id']]['contact_id'];
       foreach($softContribution['values'] as $softContribution) {
         if (!in_array($softContribution['contact_id'], $contact_ids)) {
           $memberships = $memberships + $this->getMembershipsForContact($softContribution['contact_id']);
@@ -116,7 +117,7 @@ class CRM_Membershippayment_Contribution_Form {
 
     $form->assign('contact_id', $contact_id);
 
-    $defaults['member_contact'] = $contact_id;
+    $defaults['member_contact'] = $softContributionRecipient ? $softContributionRecipient : $contact_id;
     $defaults['soft_credit_type_id'] = CRM_Utils_Array::value(ts('Gift'), array_flip($softCreditTypes));
     $form->setDefaults($defaults);
 
