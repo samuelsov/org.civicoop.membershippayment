@@ -30,7 +30,7 @@ class CRM_Membershippayment_Contribution_Form {
     if (!$contribution_id && $this->created_contribution_id) {
       $contribution_id = $this->created_contribution_id;
     }
-    
+
     if ($contribution_id) {
       $membership_payment_id = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_membership_payment where contribution_id = %1", array(1 => array($contribution_id, 'Integer')));
     }
@@ -45,13 +45,21 @@ class CRM_Membershippayment_Contribution_Form {
 
     // create soft contribution entry if contact ID and member contact are different
     if(!empty($form->_submitValues['member_contact']) && !empty($contactId) && ($form->_submitValues['member_contact'] != $contactId)) {
-      $result = civicrm_api3('ContributionSoft', 'create', array(
-        'sequential' => 1,
+      // not perfect but try not to create duplicate
+      $result = civicrm_api3('ContributionSoft', 'get', array(
         'contribution_id' => $contribution_id,
-        'amount' => $form->_submitValues['total_amount'],
         'contact_id' => $form->_submitValues['member_contact'],
         'soft_credit_type_id' => $form->_submitValues['soft_credit_type_id'],
       ));
+      if ($result['count'] == 0) {
+        $result = civicrm_api3('ContributionSoft', 'create', array(
+          'sequential' => 1,
+          'contribution_id' => $contribution_id,
+          'amount' => isset($form->_submitValues['total_amount']) ? $form->_submitValues['total_amount'] : $form->_submitValues['fee_amount'],
+          'contact_id' => $form->_submitValues['member_contact'],
+          'soft_credit_type_id' => $form->_submitValues['soft_credit_type_id'],
+        ));
+      }
     }
 
     if (!$membership_payment_id && $membership_id) {
